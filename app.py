@@ -290,7 +290,7 @@ class SmartCropAdvisor:
             - **Yield Category:** {yield_category} (Average is {crop_stats:.2f})
             - **Conditions:** State: {current_conditions['state']}, Season: {current_conditions['season']}, Rainfall: {current_conditions['rainfall']} mm, Fertilizer: {current_conditions['fertilizer']} kg/ha.
 
-            Return a single JSON object with these exact keys: "yield_assessment", "fertilizer_management", "irrigation_plan", "planting_strategy", "risk_mitigation".
+            Return a single JSON object with these exact keys: "yield_assessment", "fertilizer_management", "irrigation_plan", "planting_strategy", "risk_mitigation","cost-benefit analysis".
             
             For each key, provide a dictionary of actionable advice. Example for fertilizer_management: {{"npk_ratio": "...", "application_timing": "...", "organic_options": "..."}}. Be direct and practical.
             """
