@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Calculator - YieldWise</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Financial Calculator</h1>
+            <p>AI-Powered Agricultural Financial Analysis</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="/">🏠 Home</a>
+            <span>→</span>
+            <span>Financial Calculator</span>
+        </nav>
+
+        <div class="card">
+            <h3>📊 Enter Farming Details</h3>
+            <p class="text-gray-600 mb-6">Get a comprehensive financial breakdown for your crop farming project</p>
+            
+            <form id="finance-form">
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label for="crop-name">Crop Name</label>
+                        <input type="text" id="crop-name" required placeholder="e.g., Wheat, Rice, Maize">
+                    </div>
+                    <div class="form-group">
+                        <label for="area">Area of Land (acres)</label>
+                        <input type="number" id="area" required placeholder="e.g., 5" min="0.1" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" required placeholder="e.g., Punjab, Maharashtra">
+                    </div>
+                </div>
+                
+                <button type="submit" id="calculate-btn" class="btn-primary">
+                    <i class="fas fa-calculator mr-2"></i>Generate Financial Report
+                </button>
+            </form>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="loader-container">
+                <div class="loader"></div>
+                <p>AI is analyzing market data and generating your report...</p>
+            </div>
+        </div>
+
+        <div id="results-container" class="hidden">
+            <div class="card">
+                <h3>📈 Financial Analysis Report</h3>
+                <div id="financial-results">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample Crops Information -->
+        <div class="card">
+            <h3>🌾 Popular Crops in India</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="crop-item">
+                    <span class="crop-name">Rice</span>
+                    <span class="crop-desc">Staple food crop, high water requirement</span>
+                </div>
+                <div class="crop-item">
+                    <span class="crop-name">Wheat</span>
+                    <span class="crop-desc">Winter crop, good for northern regions</span>
+                </div>
+                <div class="crop-item">
+                    <span class="crop-name">Maize</span>
+                    <span class="crop-desc">Versatile crop, good for animal feed</span>
+                </div>
+                <div class="crop-item">
+                    <span class="crop-name">Cotton</span>
+                    <span class="crop-desc">Cash crop, requires good irrigation</span>
+                </div>
+                <div class="crop-item">
+                    <span class="crop-name">Sugarcane</span>
+                    <span class="crop-desc">High-value crop, long growing season</span>
+                </div>
+                <div class="crop-item">
+                    <span class="crop-name">Groundnut</span>
+                    <span class="crop-desc">Oilseed crop, drought tolerant</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const financeForm = document.getElementById('finance-form');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const loading = document.getElementById('loading');
+        const resultsContainer = document.getElementById('results-container');
+        
+        let expenditureChartInstance;
+        let profitLossChartInstance;
+
+        financeForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const cropName = document.getElementById('crop-name').value;
+            const area = document.getElementById('area').value;
+            const state = document.getElementById('state').value;
+
+            if (!cropName || !area || !state) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            loading.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            calculateBtn.disabled = true;
+            calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+
+            try {
+                const response = await fetch('/calculate-finance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        crop: cropName,
+                        area: area,
+                        state: state
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                displayResults(data, area);
+            } catch (error) {
+                document.getElementById('financial-results').innerHTML = 
+                    `<div class="error-box"><h3>Calculation Failed</h3><p>${error.message}</p></div>`;
+                resultsContainer.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+                calculateBtn.disabled = false;
+                calculateBtn.innerHTML = '<i class="fas fa-calculator mr-2"></i>Generate Financial Report';
+            }
+        });
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }).format(value);
+        }
+
+        function displayResults(data, area) {
+            const { estimated_costs, total_expenditure, market_analysis, profit_analysis, summary } = data;
+            
+            let html = `
+                <div class="report-header">
+                    <p class="text-center text-gray-600 mb-6">For ${area} acres of ${document.getElementById('crop-name').value} in ${document.getElementById('state').value}</p>
+                </div>
+                
+                <!-- Dashboard Section -->
+                <div class="dashboard-section">
+                    <h4>📊 Financial Dashboard</h4>
+                    <div class="charts-container">
+                        <div class="chart-item">
+                            <h5>Expenditure Breakdown</h5>
+                            <canvas id="expenditureChart"></canvas>
+                        </div>
+                        <div class="chart-item">
+                            <h5>Revenue vs. Expenditure</h5>
+                            <canvas id="profitLossChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estimated Expenditure Section -->
+                <div class="expenditure-section">
+                    <h4>📋 Estimated Expenditure</h4>
+                    <div class="cost-list">
+            `;
+            
+            Object.entries(estimated_costs).forEach(([key, cost]) => {
+                const icon = getCostIcon(key);
+                const name = formatCostName(key);
+                html += `
+                    <div class="cost-item">
+                        <div class="cost-header">
+                            <span class="cost-icon">${icon}</span>
+                            <span class="cost-name">${name}</span>
+                            <span class="cost-value">${formatCurrency(cost.total_cost)}</span>
+                        </div>
+                        <p class="cost-justification">${cost.justification}</p>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                    <div class="total-expenditure">
+                        <span class="total-label">Total Estimated Expenditure</span>
+                        <span class="total-value">${formatCurrency(total_expenditure)}</span>
+                    </div>
+                </div>
+
+                <!-- Revenue & Profit Analysis Section -->
+                <div class="revenue-section">
+                    <h4>💰 Revenue & Profit Analysis</h4>
+                    <div class="revenue-grid">
+                        <div class="revenue-item">
+                            <p class="revenue-label">Avg. Yield / Acre</p>
+                            <p class="revenue-value">${market_analysis.average_yield_per_acre}</p>
+                        </div>
+                        <div class="revenue-item">
+                            <p class="revenue-label">Avg. Market Price</p>
+                            <p class="revenue-value">${market_analysis.average_market_price}</p>
+                        </div>
+                        <div class="revenue-item">
+                            <p class="revenue-label">Estimated Revenue</p>
+                            <p class="revenue-value">${formatCurrency(market_analysis.estimated_revenue)}</p>
+                        </div>
+                    </div>
+                    <p class="revenue-justification">${market_analysis.justification}</p>
+                </div>
+
+                <!-- Final Profit/Loss -->
+                <div class="profit-section ${profit_analysis.potential_profit > 0 ? 'profit' : 'loss'}">
+                    <h4>${profit_analysis.potential_profit > 0 ? '🎉 Potential Profit' : '⚠️ Potential Loss'}</h4>
+                    <div class="profit-amount">${formatCurrency(Math.abs(profit_analysis.potential_profit))}</div>
+                    <p class="roi">Return on Investment (ROI): ${profit_analysis.return_on_investment}</p>
+                </div>
+
+                <!-- Summary -->
+                <div class="summary-section">
+                    <h4>📝 Summary</h4>
+                    <p class="summary-text">"${summary}"</p>
+                </div>
+            `;
+
+            document.getElementById('financial-results').innerHTML = html;
+
+            // Create charts after HTML is rendered
+            createExpenditureChart(estimated_costs);
+            createProfitLossChart(total_expenditure, market_analysis.estimated_revenue);
+            
+            resultsContainer.classList.remove('hidden');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getCostIcon(costType) {
+            const icons = {
+                'seeds': '🌱',
+                'fertilizer': '🌿',
+                'pesticides_herbicides': '🐞',
+                'labor': '👨‍🌾',
+                'machinery_fuel': '🚜',
+                'irrigation': '💧',
+                'miscellaneous': '📦'
+            };
+            return icons[costType] || '📋';
+        }
+
+        function formatCostName(costType) {
+            return costType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function createExpenditureChart(costs) {
+            if (expenditureChartInstance) {
+                expenditureChartInstance.destroy();
+            }
+            
+            const ctx = document.getElementById('expenditureChart').getContext('2d');
+            const labels = Object.keys(costs).map(key => formatCostName(key));
+            const data = Object.values(costs).map(item => item.total_cost);
+
+            expenditureChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Expenditure',
+                        data: data,
+                        backgroundColor: [
+                            '#21808d', '#28a745', '#ffc107', '#dc3545', 
+                            '#17a2b8', '#6610f2', '#6f42c1'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += formatCurrency(context.parsed);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                },
+            });
+        }
+
+        function createProfitLossChart(expenditure, revenue) {
+            if (profitLossChartInstance) {
+                profitLossChartInstance.destroy();
+            }
+            
+            const ctx = document.getElementById('profitLossChart').getContext('2d');
+            
+            profitLossChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Financial Overview'],
+                    datasets: [
+                        {
+                            label: 'Total Expenditure',
+                            data: [expenditure],
+                            backgroundColor: 'rgba(220, 38, 38, 0.6)',
+                            borderColor: 'rgba(220, 38, 38, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Estimated Revenue',
+                            data: [revenue],
+                            backgroundColor: 'rgba(22, 163, 74, 0.6)',
+                            borderColor: 'rgba(22, 163, 74, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += formatCurrency(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+    <style>
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #626c71;
+        }
+
+        .nav-breadcrumb a {
+            color: #21808d;
+            text-decoration: none;
+        }
+
+        .nav-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .crop-item {
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .crop-name {
+            font-weight: 600;
+            color: #13343b;
+            margin-bottom: 0.25rem;
+        }
+
+        .crop-desc {
+            font-size: 0.875rem;
+            color: #626c71;
+        }
+
+        .dashboard-section {
+            margin-bottom: 2rem;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .chart-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .chart-item h5 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #13343b;
+        }
+
+        .cost-list {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cost-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cost-item:last-child {
+            border-bottom: none;
+        }
+
+        .cost-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .cost-icon {
+            font-size: 1.25rem;
+        }
+
+        .cost-name {
+            flex: 1;
+            font-weight: 500;
+            color: #13343b;
+        }
+
+        .cost-value {
+            font-weight: 600;
+            color: #13343b;
+        }
+
+        .cost-justification {
+            font-size: 0.875rem;
+            color: #626c71;
+            margin-left: 2rem;
+            font-style: italic;
+        }
+
+        .total-expenditure {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #21808d;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .revenue-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .revenue-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .revenue-label {
+            font-size: 0.875rem;
+            color: #626c71;
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #13343b;
+        }
+
+        .revenue-justification {
+            font-size: 0.875rem;
+            color: #626c71;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .profit-section {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .profit-section.profit {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+        }
+
+        .profit-section.loss {
+            background: #fef2f2;
+            border: 1px solid #dc2626;
+        }
+
+        .profit-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .profit-section.profit .profit-amount {
+            color: #16a34a;
+        }
+
+        .profit-section.loss .profit-amount {
+            color: #dc2626;
+        }
+
+        .roi {
+            font-weight: 500;
+            color: #13343b;
+        }
+
+        .summary-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .summary-text {
+            font-style: italic;
+            color: #626c71;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .revenue-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

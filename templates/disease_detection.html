@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Detection - YieldWise</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Plant Disease Detection</h1>
+            <p>AI-Powered Plant Health Analysis</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="/">🏠 Home</a>
+            <span>→</span>
+            <span>Plant Disease Detection</span>
+        </nav>
+
+        <div class="card">
+            <h3>📸 Upload Plant Image</h3>
+            <p class="text-gray-600 mb-6">Upload a clear image of your plant leaves to detect potential diseases</p>
+            
+            <form id="disease-form" enctype="multipart/form-data">
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-lg font-semibold mb-2">Drop your image here or click to browse</p>
+                        <p class="text-sm text-gray-500">Supports: JPG, PNG, GIF, BMP (Max 16MB)</p>
+                        <input type="file" id="image-input" accept="image/*" class="hidden">
+                    </div>
+                </div>
+                
+                <div id="image-preview" class="hidden mt-4">
+                    <img id="preview-img" class="max-w-full h-64 object-contain mx-auto rounded-lg border">
+                    <button type="submit" id="analyze-btn" class="btn-primary mt-4">
+                        <i class="fas fa-search mr-2"></i>Analyze Plant Health
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="loader-container">
+                <div class="loader"></div>
+                <p>Analyzing plant health...</p>
+            </div>
+        </div>
+
+        <div id="results-container" class="hidden">
+            <div class="card">
+                <h3>🔍 Analysis Results</h3>
+                <div id="disease-results">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Disease Information -->
+        <div class="card">
+            <h3>📚 Supported Diseases</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="disease-item">
+                    <span class="disease-name">Bacterial Leaf Blight</span>
+                    <span class="disease-desc">Yellowing and wilting of leaves</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Bacterial Leaf Streak</span>
+                    <span class="disease-desc">Linear lesions on leaves</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Bacterial Panicle Blight</span>
+                    <span class="disease-desc">Infection of grain heads</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Blast</span>
+                    <span class="disease-desc">Fungal infection causing spots</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Brown Spot</span>
+                    <span class="disease-desc">Circular brown lesions</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Dead Heart</span>
+                    <span class="disease-desc">Death of growing point</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Downy Mildew</span>
+                    <span class="disease-desc">Fuzzy growth on leaves</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Hispa</span>
+                    <span class="disease-desc">Beetle damage on leaves</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Normal</span>
+                    <span class="disease-desc">Healthy plant condition</span>
+                </div>
+                <div class="disease-item">
+                    <span class="disease-name">Tungro</span>
+                    <span class="disease-desc">Viral disease causing stunting</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('upload-area');
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        const diseaseForm = document.getElementById('disease-form');
+        const loading = document.getElementById('loading');
+        const resultsContainer = document.getElementById('results-container');
+
+        // Upload area click handler
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        // File input change handler
+        imageInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            if (file.size > 16 * 1024 * 1024) {
+                alert('File size must be less than 16MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                imagePreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Form submission
+        diseaseForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const file = imageInput.files[0];
+            if (!file) {
+                alert('Please select an image first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            loading.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch('/predict-disease', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                displayResults(data);
+            } catch (error) {
+                document.getElementById('disease-results').innerHTML = 
+                    `<div class="error-box"><h3>Analysis Failed</h3><p>${error.message}</p></div>`;
+                resultsContainer.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+            }
+        });
+
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('disease-results');
+            
+            let html = `
+                <div class="result-summary">
+                    <div class="result-main">
+                        <h4>Detected Condition</h4>
+                        <div class="disease-result ${data.disease === 'normal' ? 'healthy' : 'diseased'}">
+                            <span class="disease-name">${formatDiseaseName(data.disease)}</span>
+                            <span class="confidence">${data.confidence}% confidence</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (data.disease !== 'normal') {
+                html += `
+                    <div class="recommendations">
+                        <h4>Recommended Actions</h4>
+                        <ul>
+                            <li>Consult with a local agricultural expert</li>
+                            <li>Consider appropriate treatment based on disease type</li>
+                            <li>Monitor plant health regularly</li>
+                            <li>Implement preventive measures for future crops</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="healthy-plant">
+                        <h4>Great News!</h4>
+                        <p>Your plant appears to be healthy. Continue with regular care and monitoring.</p>
+                    </div>
+                `;
+            }
+
+            if (data.all_predictions) {
+                html += `
+                    <div class="all-predictions">
+                        <h4>All Predictions</h4>
+                        <div class="prediction-list">
+                `;
+                
+                Object.entries(data.all_predictions)
+                    .sort(([,a], [,b]) => b - a)
+                    .forEach(([disease, confidence]) => {
+                        html += `
+                            <div class="prediction-item">
+                                <span class="disease-name">${formatDiseaseName(disease)}</span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: ${confidence}%"></div>
+                                </div>
+                                <span class="confidence-value">${confidence.toFixed(1)}%</span>
+                            </div>
+                        `;
+                    });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultsDiv.innerHTML = html;
+            resultsContainer.classList.remove('hidden');
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function formatDiseaseName(disease) {
+            return disease.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+    </script>
+
+    <style>
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover,
+        .upload-area.drag-over {
+            border-color: #21808d;
+            background-color: #f8f9fa;
+        }
+
+        .disease-item {
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .disease-name {
+            font-weight: 600;
+            color: #13343b;
+        }
+
+        .disease-desc {
+            font-size: 0.875rem;
+            color: #626c71;
+            margin-top: 0.25rem;
+        }
+
+        .disease-result {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .disease-result.healthy {
+            background-color: #dcfce7;
+            border: 1px solid #16a34a;
+        }
+
+        .disease-result.diseased {
+            background-color: #fef2f2;
+            border: 1px solid #dc2626;
+        }
+
+        .confidence {
+            font-size: 0.875rem;
+            color: #626c71;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .prediction-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .prediction-item:last-child {
+            border-bottom: none;
+        }
+
+        .confidence-bar {
+            flex: 1;
+            height: 8px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background-color: #21808d;
+            transition: width 0.3s ease;
+        }
+
+        .confidence-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #13343b;
+            min-width: 50px;
+        }
+
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: #626c71;
+        }
+
+        .nav-breadcrumb a {
+            color: #21808d;
+            text-decoration: none;
+        }
+
+        .nav-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</body>
+</html>

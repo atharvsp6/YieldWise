@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - YieldWise</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 YieldWise Dashboard</h1>
+            <p>Comprehensive Agricultural Intelligence Platform</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-breadcrumb">
+            <a href="/">🏠 Home</a>
+            <span>→</span>
+            <span>Dashboard</span>
+        </nav>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🌾</div>
+                <div class="stat-content">
+                    <h3>Yield Prediction</h3>
+                    <p>AI-powered crop yield forecasting</p>
+                    <a href="/" class="stat-link">Get Started →</a>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔬</div>
+                <div class="stat-content">
+                    <h3>Disease Detection</h3>
+                    <p>Plant health analysis from images</p>
+                    <a href="/disease-detection" class="stat-link">Analyze →</a>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3>Financial Calculator</h3>
+                    <p>Comprehensive cost-benefit analysis</p>
+                    <a href="/financial-calculator" class="stat-link">Calculate →</a>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🌤️</div>
+                <div class="stat-content">
+                    <h3>Weather Forecast</h3>
+                    <p>Real-time weather information</p>
+                    <a href="/" class="stat-link">Check Weather →</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Overview -->
+        <div class="card">
+            <h3>🚀 Platform Features</h3>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <h4>Smart Yield Prediction</h4>
+                    <p>Advanced machine learning models predict crop yields based on multiple factors including weather, soil conditions, and farming practices.</p>
+                    <ul class="feature-list">
+                        <li>Multi-factor analysis</li>
+                        <li>Confidence intervals</li>
+                        <li>AI recommendations</li>
+                        <li>Location-based insights</li>
+                    </ul>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🔬</div>
+                    <h4>Plant Disease Detection</h4>
+                    <p>Computer vision technology identifies plant diseases from leaf images with high accuracy, helping farmers take timely action.</p>
+                    <ul class="feature-list">
+                        <li>10+ disease categories</li>
+                        <li>High accuracy detection</li>
+                        <li>Treatment recommendations</li>
+                        <li>Prevention strategies</li>
+                    </ul>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <h4>Financial Analysis</h4>
+                    <p>Comprehensive financial planning tools that calculate costs, revenues, and profitability for different crop farming scenarios.</p>
+                    <ul class="feature-list">
+                        <li>Cost breakdown analysis</li>
+                        <li>Market price insights</li>
+                        <li>ROI calculations</li>
+                        <li>Visual charts & graphs</li>
+                    </ul>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌤️</div>
+                    <h4>Weather Integration</h4>
+                    <p>Real-time weather data and forecasts integrated with farming recommendations to optimize crop management decisions.</p>
+                    <ul class="feature-list">
+                        <li>5-day weather forecast</li>
+                        <li>Location-based data</li>
+                        <li>Interactive maps</li>
+                        <li>Weather alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Getting Started Guide -->
+        <div class="card">
+            <h3>📖 Getting Started</h3>
+            <div class="guide-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Select Your Location</h4>
+                        <p>Use the interactive map or search to select your farming location. This helps provide location-specific recommendations.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Choose Your Tool</h4>
+                        <p>Select from yield prediction, disease detection, or financial calculator based on your current needs.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Input Your Data</h4>
+                        <p>Provide relevant information such as crop type, area, or upload plant images for analysis.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Get AI Insights</h4>
+                        <p>Receive comprehensive analysis, recommendations, and actionable insights to optimize your farming operations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Supported Crops -->
+        <div class="card">
+            <h3>🌾 Supported Crops</h3>
+            <div class="crops-grid">
+                <div class="crop-card">
+                    <span class="crop-icon">🌾</span>
+                    <span class="crop-name">Rice</span>
+                </div>
+                <div class="crop-card">
+                    <span class="crop-icon">🌾</span>
+                    <span class="crop-name">Wheat</span>
+                </div>
+                <div class="crop-card">
+                    <span class="crop-icon">🌽</span>
+                    <span class="crop-name">Maize</span>
+                </div>
+                <div class="crop-card">
+                    <span class="crop-icon">🌿</span>
+                    <span class="crop-name">Cotton</span>
+                </div>
+                <div class="crop-card">
+                    <span class="crop-icon">🎋</span>
+                    <span class="crop-name">Sugarcane</span>
+                </div>
+                <div class="crop-card">
+                    <span class="crop-icon">🥜</span>
+                    <span class="crop-name">Groundnut</span>
+                </div>
+                <div class="crop-card">
+                    <span class="crop-icon">🌾</span>
+                    <span class="crop-name">Bajra</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <h3>⚡ Quick Actions</h3>
+            <div class="actions-grid">
+                <a href="/" class="action-card">
+                    <div class="action-icon">🎯</div>
+                    <h4>Predict Yield</h4>
+                    <p>Get AI-powered yield predictions for your crops</p>
+                </a>
+                <a href="/disease-detection" class="action-card">
+                    <div class="action-icon">🔬</div>
+                    <h4>Detect Disease</h4>
+                    <p>Upload plant images for disease analysis</p>
+                </a>
+                <a href="/financial-calculator" class="action-card">
+                    <div class="action-icon">💰</div>
+                    <h4>Calculate Costs</h4>
+                    <p>Get detailed financial analysis for farming</p>
+                </a>
+                <a href="/" class="action-card">
+                    <div class="action-icon">🌤️</div>
+                    <h4>Check Weather</h4>
+                    <p>View weather forecast for your location</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+            color: #626c71;
+        }
+
+        .nav-breadcrumb a {
+            color: #21808d;
+            text-decoration: none;
+        }
+
+        .nav-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid rgba(94, 82, 64, 0.12);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .stat-content h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #13343b;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-content p {
+            font-size: 0.875rem;
+            color: #626c71;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-link {
+            color: #21808d;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .stat-link:hover {
+            text-decoration: underline;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #13343b;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-item p {
+            color: #626c71;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.25rem 0;
+            color: #13343b;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        .guide-steps {
+            margin-top: 1.5rem;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #21808d;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #13343b;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: #626c71;
+            line-height: 1.6;
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .crop-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            transition: transform 0.2s ease;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .crop-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .crop-name {
+            font-weight: 500;
+            color: #13343b;
+            text-align: center;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: white;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #21808d;
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-card h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #13343b;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .action-card p {
+            color: #626c71;
+            text-align: center;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .crops-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</body>
+</html>
