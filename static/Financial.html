@@ -184,7 +184,7 @@
             });
 
             async function getFinancialAnalysis(crop, area, state) {
-                const apiKey = ""; // Leave empty
+                const apiKey = "GEMINI_API_KEY"; // Leave empty
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
 
                 const systemPrompt = `You are an expert agricultural financial advisor for the Indian market. Your task is to provide a detailed and realistic financial breakdown for a farmer. You MUST base your calculations on recent, publicly available market data, including government Minimum Support Prices (MSP) where applicable for the specified crop and state. You must provide your response ONLY as a valid JSON object. Do not include any text or explanations outside of the JSON. All currency values must be in Indian Rupees (INR). For each cost and revenue item, you MUST provide a brief justification for the value you chose.`;
