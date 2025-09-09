@@ -9,6 +9,11 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
     
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
 </head>
 <body>
     <div class="container">
@@ -136,6 +141,39 @@
             </div>
         </div>
     </div>
+
+    <footer class="bg-gray-800 text-white py-8 px-4 rounded-t-xl">
+        <div class="container mx-auto">
+            <div class="flex flex-wrap justify-around items-center gap-8">
+
+                <!-- Link 1: Replace href, icon class, and text -->
+                <a href="https://yieldwise-a1rq.onrender.com/" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center w-24 text-center text-gray-400 hover:text-white transition-colors duration-300 ease-in-out">
+                    <i class="fab fa-facebook-f text-3xl mb-2"></i>
+                    <span class="text-sm font-medium">Yield Predictor</span>
+                </a>
+
+                <!-- Link 2: Replace href, icon class, and text -->
+                <a href="https://yieldwise-a1rq.onrender.com/Disease" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center w-24 text-center text-gray-400 hover:text-white transition-colors duration-300 ease-in-out">
+                    <i class="fab fa-twitter text-3xl mb-2"></i>
+                    <span class="text-sm font-medium">Disease Prediction</span>
+                </a>
+
+                <!-- Link 3: Replace href, icon class, and text -->
+                <a href="https://yieldwise-a1rq.onrender.com/FinancialTool" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center w-24 text-center text-gray-400 hover:text-white transition-colors duration-300 ease-in-out">
+                    <i class="fab fa-instagram text-3xl mb-2"></i>
+                    <span class="text-sm font-medium">Financial tool</span>
+                </a>
+
+                <!-- Link 4: Replace href, icon class, and text -->
+                <a href="https://yieldwise-a1rq.onrender.com/Dashboard" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center w-24 text-center text-gray-400 hover:text-white transition-colors duration-300 ease-in-out">
+                    <i class="fab fa-linkedin-in text-3xl mb-2"></i>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+
+            </div>
+            
+        </div>
+    </footer>
 
     <script>
         // Configuration
