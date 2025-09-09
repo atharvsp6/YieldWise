@@ -3,213 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:image/svg+xml, <svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>">
-    <title>YieldWise</title>
+    <title>Smart Crop Advisor - AI-Powered Agricultural Intelligence</title>
+    
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🌾 YieldWise</h1>
-            <p>Data-driven yield predictions with AI-powered farming insights.</p>
+            <p>AI-Powered Agricultural Intelligence Platform</p>
         </header>
 
-        <main>
-            <div class="card" id="input-card">
-                <form id="crop-form">
-                    <div class="grid-container">
-                        <div class="form-group">
-                            <label for="crop">Crop</label>
-                            <select id="crop">
-                                <option>Rice</option><option>Wheat</option><option>Maize</option>
-                                <option>Cotton</option><option>Sugarcane</option><option>Groundnut</option>
-                                <option>Bajra</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="season">Season</label>
-                            <select id="season">
-                                <option>Kharif</option><option>Rabi</option>
-                                <option>Summer</option><option>Whole Year</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="state">State</label>
-                            <select id="state">
-                                <option>Andhra Pradesh</option><option>Karnataka</option><option>Tamil Nadu</option>
-                                <option>Kerala</option><option>Maharashtra</option><option>Punjab</option>
-                                <option>Haryana</option><option>Gujarat</option><option>Rajasthan</option>
-                                <option>West Bengal</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="grid-container number-inputs">
-                        <div class="form-group">
-                            <label for="area">📏 Area (hectares)</label>
-                            <input type="number" id="area" value="100" min="10" step="10">
-                        </div>
-                        <div class="form-group">
-                            <label for="rainfall">🌧️ Rainfall (mm)</label>
-                            <input type="number" id="rainfall" value="1200" min="300" step="50">
-                        </div>
-                        <div class="form-group">
-                            <label for="fertilizer">🧪 Fertilizer (kg/ha)</label>
-                            <input type="number" id="fertilizer" value="75" min="20" step="5">
-                        </div>
-                        <div class="form-group">
-                            <label for="pesticide">🛡️ Pesticide (kg/ha)</label>
-                            <input type="number" id="pesticide" value="20" min="5" step="2">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" id="predict-btn">
-                        <span>Analyze & Predict</span>
-                    </button>
-                </form>
+        <div class="card" id="location-card">
+            <h3>📍 Select Location</h3>
+            
+            <div class="form-group">
+                <label for="location-search">Search Location</label>
+                <div class="location-search-container">
+                    <input type="text" id="location-search" placeholder="Enter city name, pin code, or address..." />
+                    <button type="button" id="current-location-btn" title="Use Current Location">📍</button>
+                </div>
+                <div id="location-suggestions" class="location-suggestions hidden"></div>
             </div>
 
-            <div id="results-container" class="hidden">
-                <div class="card" id="prediction-card">
-                    <h3>Yield Prediction</h3>
-                    <div class="prediction-main">
-                        <div class="yield-value"><span id="predicted-yield">--</span> tons/ha</div>
-                        <div class="yield-details">
-                            <p><strong>Confidence Range:</strong> <span id="confidence-interval">--</span></p>
-                            <p><strong>Total Production:</strong> <span id="total-production">--</span> tons</p>
-                        </div>
+            <div id="map-container" class="map-container">
+                <div id="map"></div>
+            </div>
+
+            <div id="selected-location" class="selected-location hidden">
+                <strong>Selected Location:</strong> <span id="location-name">Not selected</span>
+                <br>
+                <small>Coordinates: <span id="location-coords">N/A</span></small>
+                <small class="location-state-info hidden">State: <span id="location-state">N/A</span></small>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🌱 Crop Yield Prediction</h3>
+            
+            <form id="prediction-form">
+                <div class="grid-container">
+                    <div class="form-group">
+                        <label for="crop">Crop Type</label>
+                        <select id="crop" required>
+                            <option value="">Select Crop</option>
+                            <option value="Rice">Rice</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Cotton">Cotton</option>
+                            <option value="Sugarcane">Sugarcane</option>
+                            <option value="Groundnut">Groundnut</option>
+                            <option value="Bajra">Bajra</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="season">Season</label>
+                        <select id="season" required>
+                            <option value="">Select Season</option>
+                            <option value="Kharif">Kharif</option>
+                            <option value="Rabi">Rabi</option>
+                            <option value="Summer">Summer</option>
+                            <option value="Whole Year">Whole Year</option>
+                        </select>
+                    </div>
+
+                    </div>
+
+                <div class="grid-container number-inputs">
+                    <div class="form-group">
+                        <label for="area">Area (hectares)</label>
+                        <input type="number" id="area" min="0.1" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rainfall">Annual Rainfall (mm)</label>
+                        <input type="number" id="rainfall" min="0" step="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fertilizer">Fertilizer (kg/ha)</label>
+                        <input type="number" id="fertilizer" min="0" step="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pesticide">Pesticide (kg/ha)</label>
+                        <input type="number" id="pesticide" min="0" step="0.1" required>
                     </div>
                 </div>
 
-                <div id="recommendations-section" class="hidden">
-                    </div>
-                 <div id="ai-disabled-note" class="card warning-box hidden">
-                    <p>🤖 AI recommendations are not available. Ensure the server is configured with a valid Gemini API key.</p>
-                </div>
+                <button type="submit" id="predict-btn">🔮 Predict Crop Yield</button>
+            </form>
+        </div>
 
-                <div id="error-box" class="card error-box hidden">
-                    <h3>An Error Occurred</h3>
-                    <p id="error-message"></p>
+        <div class="card weather-section" id="weather-section">
+            <h3>🌤️ Weather Forecast</h3>
+            <p>Select a location to view weather forecast</p>
+            <button type="button" id="weather-btn" class="hidden">Get Weather Forecast</button>
+            <div id="weather-results" class="hidden"></div>
+        </div>
+
+        <div id="results-container" class="hidden">
+            <div class="card" id="prediction-card">
+                <h3>🎯 Yield Prediction Results</h3>
+                <div class="prediction-main">
+                    <div class="yield-value" id="yield-value">--</div>
+                    <div class="yield-details">
+                        <p><strong>Predicted Yield:</strong> <span id="yield-amount">--</span> tons/hectare</p>
+                        <p><strong>Confidence Range:</strong> <span id="confidence-range">--</span></p>
+                        <p><strong>Total Production:</strong> <span id="total-production">--</span> tons</p>
+                    </div>
                 </div>
             </div>
 
-            <div id="loader" class="loader-container hidden">
+            <div class="card" id="recommendations-section">
+                <h3>🤖 AI-Powered Recommendations</h3>
+                <div id="recommendations-content">
+                    <div class="warning-box">
+                        <p>🤖 AI recommendations are not available. Ensure the server is configured with a valid Gemini API key.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="loader-container">
                 <div class="loader"></div>
                 <p>Analyzing data and consulting AI...</p>
             </div>
-        </main>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('crop-form');
-            const predictBtn = document.getElementById('predict-btn');
-            const resultsContainer = document.getElementById('results-container');
-            const loader = document.getElementById('loader');
-            const errorBox = document.getElementById('error-box');
-            const aiDisabledNote = document.getElementById('ai-disabled-note');
+        // Configuration
+        const MAPBOX_ACCESS_TOKEN = '{{ mapbox_key }}';
+        
+        // Global variables
+        let map;
+        let currentLocationMarker;
+        let selectedCoordinates = null;
+        let selectedLocationName = '';
+        let selectedState = ''; // New variable to store the state
+
+        // Initialize map
+        function initializeMap() {
+            if (!MAPBOX_ACCESS_TOKEN || MAPBOX_ACCESS_TOKEN === 'YOUR_MAPBOX_ACCESS_TOKEN') {
+                document.getElementById('map-container').innerHTML = '<div class="error-box"><p>Please configure Mapbox API key to enable map functionality</p></div>';
+                return;
+            }
+
+            mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
+
+            map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/satellite-streets-v12',
+                center: [78.9629, 20.5937], // India center
+                zoom: 4
+            });
+
+            // Add navigation controls
+            map.addControl(new mapboxgl.NavigationControl());
+
+            // Handle map click
+            map.on('click', function(e) {
+                const coords = [e.lngLat.lng, e.lngLat.lat];
+                setLocationFromCoordinates(coords);
+                reverseGeocode(e.lngLat.lat, e.lngLat.lng);
+            });
+        }
+
+        // Set location from coordinates
+        function setLocationFromCoordinates(coords) {
+            selectedCoordinates = coords;
             
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                loader.classList.remove('hidden');
-                resultsContainer.classList.add('hidden');
-                errorBox.classList.add('hidden');
-                aiDisabledNote.classList.add('hidden');
-                predictBtn.disabled = true;
+            // Remove existing marker
+            if (currentLocationMarker) {
+                currentLocationMarker.remove();
+            }
+
+            // Add new marker
+            currentLocationMarker = new mapboxgl.Marker({color: '#FF6B6B'})
+                .setLngLat(coords)
+                .addTo(map);
+
+            // Fly to location
+            map.flyTo({
+                center: coords,
+                zoom: 12
+            });
+
+            // Update display
+            document.getElementById('location-coords').textContent = `${coords[1].toFixed(4)}, ${coords[0].toFixed(4)}`;
+            document.getElementById('selected-location').classList.remove('hidden');
+
+            // Show weather button
+            document.getElementById('weather-btn').classList.remove('hidden');
+            document.querySelector('#weather-section p').classList.add('hidden');
+        }
+
+        // Location search functionality
+        function setupLocationSearch() {
+            const searchInput = document.getElementById('location-search');
+            const suggestionsDiv = document.getElementById('location-suggestions');
+            const currentLocationBtn = document.getElementById('current-location-btn');
+
+            let searchTimeout;
+
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
                 
-                const formData = {
-                    crop: document.getElementById('crop').value,
-                    season: document.getElementById('season').value,
-                    state: document.getElementById('state').value,
-                    area: document.getElementById('area').value,
-                    rainfall: document.getElementById('rainfall').value,
-                    fertilizer: document.getElementById('fertilizer').value,
-                    pesticide: document.getElementById('pesticide').value,
-                };
+                clearTimeout(searchTimeout);
+                
+                if (query.length < 3) {
+                    suggestionsDiv.classList.add('hidden');
+                    return;
+                }
 
-                try {
-                    const response = await fetch('/predict', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(formData),
-                    });
-                    
-                    const data = await response.json();
+                searchTimeout = setTimeout(() => {
+                    searchLocations(query);
+                }, 300);
+            });
 
-                    if (!response.ok) {
-                        throw new Error(data.error || 'An unknown server error occurred.');
-                    }
-                    
-                    displayResults(data);
-
-                } catch (err) {
-                    displayError(err.message);
-                } finally {
-                    loader.classList.add('hidden');
-                    predictBtn.disabled = false;
+            // Current location button
+            currentLocationBtn.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const coords = [position.coords.longitude, position.coords.latitude];
+                            setLocationFromCoordinates(coords);
+                            reverseGeocode(position.coords.latitude, position.coords.longitude);
+                        },
+                        function(error) {
+                            alert('Error getting location: ' + error.message);
+                        }
+                    );
+                } else {
+                    alert('Geolocation is not supported by this browser.');
                 }
             });
 
-            function displayResults(data) {
-                resultsContainer.classList.remove('hidden');
-                document.getElementById('prediction-card').classList.remove('hidden');
-
-                document.getElementById('predicted-yield').textContent = data.predicted_yield;
-                document.getElementById('confidence-interval').textContent = `${data.confidence_interval[0]} - ${data.confidence_interval[1]} tons/ha`;
-                document.getElementById('total-production').textContent = `${data.total_production}`;
-
-                const recSection = document.getElementById('recommendations-section');
-                recSection.innerHTML = '<h3>🤖 AI-Powered Recommendations</h3>';
-                
-                if (data.recommendations && !data.recommendations.error) {
-                    recSection.classList.remove('hidden');
-                    let delay = 0;
-                    for (const [key, value] of Object.entries(data.recommendations)) {
-                        const card = createRecommendationCard(key, value);
-                        card.style.animationDelay = `${delay}s`;
-                        recSection.appendChild(card);
-                        delay += 0.1;
-                    }
-                } else {
-                    recSection.classList.add('hidden');
-                    aiDisabledNote.classList.remove('hidden');
-                    if (data.recommendations && data.recommendations.error) {
-                        console.error("AI Error:", data.recommendations.error);
-                    }
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!suggestionsDiv.contains(e.target) && e.target !== searchInput) {
+                    suggestionsDiv.classList.add('hidden');
                 }
+            });
+        }
+
+        // Search for locations using Mapbox Geocoding via our backend
+        async function searchLocations(query) {
+            try {
+                const response = await fetch('/geocode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+                
+                if (data.results) {
+                    displayLocationSuggestions(data.results);
+                } else {
+                    document.getElementById('location-suggestions').innerHTML = `<div class="suggestion-item">No results found</div>`;
+                    document.getElementById('location-suggestions').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Location search error:', error);
+                document.getElementById('location-suggestions').innerHTML = `<div class="suggestion-item error-text">Error searching locations.</div>`;
+                document.getElementById('location-suggestions').classList.remove('hidden');
+            }
+        }
+
+        // Display location suggestions
+        function displayLocationSuggestions(results) {
+            const suggestionsDiv = document.getElementById('location-suggestions');
+            suggestionsDiv.innerHTML = '';
+            
+            results.forEach(result => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.className = 'suggestion-item';
+                suggestionItem.textContent = result.place_name;
+                
+                suggestionItem.addEventListener('click', function() {
+                    selectLocation(result);
+                });
+                
+                suggestionsDiv.appendChild(suggestionItem);
+            });
+            
+            suggestionsDiv.classList.remove('hidden');
+        }
+
+        // Select a location from suggestions
+        function selectLocation(location) {
+            // Update input and hide suggestions
+            document.getElementById('location-search').value = location.place_name;
+            document.getElementById('location-suggestions').classList.add('hidden');
+            
+            // Update map and display
+            setLocationFromCoordinates(location.coordinates);
+            document.getElementById('location-name').textContent = location.place_name;
+            
+            // Extract state from context
+            const stateComponent = location.context.find(c => c.id.startsWith('region.'));
+            selectedState = stateComponent ? stateComponent.text : 'Unknown State';
+            document.getElementById('location-state').textContent = selectedState;
+            document.querySelector('.location-state-info').classList.remove('hidden');
+        }
+
+        // Reverse geocode coordinates to get location name and state via our backend
+        async function reverseGeocode(lat, lon) {
+            try {
+                const response = await fetch('/reverse-geocode', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lat: lat, lon: lon })
+                });
+
+                const data = await response.json();
+                
+                if (data.place_name) {
+                    document.getElementById('location-name').textContent = data.place_name;
+                    document.getElementById('location-search').value = data.place_name;
+                    
+                    // Attempt to extract state from the place_name or context if available
+                    // This is a common heuristic, might need refinement based on Mapbox's exact output
+                    const parts = data.place_name.split(',').map(s => s.trim());
+                    // Heuristic: often the second or third part after city/town is the state
+                    selectedState = 'Unknown State';
+                    if (parts.length > 1) {
+                         // Look for common Indian states or try to extract from a broader context
+                        const potentialState = parts[parts.length - 2]; // e.g., "Delhi, India" or "Mumbai, Maharashtra, India"
+                        if (potentialState && potentialState.length > 2 && !/\d/.test(potentialState)) { // rudimentary check for valid state
+                             selectedState = potentialState;
+                        } else if (parts.length > 2) {
+                            const anotherPotential = parts[parts.length - 3];
+                            if (anotherPotential && anotherPotential.length > 2 && !/\d/.test(anotherPotential)) {
+                                selectedState = anotherPotential;
+                            }
+                        }
+                    }
+
+                    // A more robust way might be to add logic in app.py to parse Mapbox's 'context' and return state explicitly
+                    // For now, this client-side heuristic is a start.
+                    document.getElementById('location-state').textContent = selectedState;
+                    document.querySelector('.location-state-info').classList.remove('hidden');
+
+                }
+            } catch (error) {
+                console.error('Reverse geocoding error:', error);
+                document.getElementById('location-name').textContent = 'Could not determine location name.';
+                document.getElementById('location-state').textContent = 'Unknown State';
+                document.querySelector('.location-state-info').classList.add('hidden');
+            }
+        }
+
+        // Weather functionality
+        async function getWeatherForecast() {
+            if (!selectedCoordinates) {
+                alert('Please select a location first');
+                return;
+            }
+
+            const weatherBtn = document.getElementById('weather-btn');
+            const weatherResults = document.getElementById('weather-results');
+            
+            weatherBtn.textContent = 'Loading...';
+            weatherBtn.disabled = true;
+            weatherResults.classList.add('hidden');
+
+
+            try {
+                const response = await fetch('/weather', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lat: selectedCoordinates[1],
+                        lon: selectedCoordinates[0]
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.forecast) {
+                    displayWeatherForecast(data.forecast, data.location);
+                } else {
+                    weatherResults.innerHTML = `<div class="error-box"><p>${data.error || 'Failed to fetch weather data'}</p></div>`;
+                    weatherResults.classList.remove('hidden');
+                }
+            } catch (error) {
+                weatherResults.innerHTML = `<div class="error-box"><p>Error fetching weather: ${error.message}</p></div>`;
+                weatherResults.classList.remove('hidden');
+            } finally {
+                weatherBtn.textContent = 'Refresh Weather Forecast';
+                weatherBtn.disabled = false;
+            }
+        }
+
+        // Display weather forecast
+        function displayWeatherForecast(forecast, location) {
+            const weatherResults = document.getElementById('weather-results');
+            
+            let forecastHTML = `<h4>5-Day Forecast for ${location}</h4><div class="weather-grid">`;
+            
+            forecast.forEach(day => {
+                forecastHTML += `
+                    <div class="weather-card">
+                        <p class="weather-date">${new Date(day.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}</p>
+                        <img src="https://openweathermap.org/img/w/${day.icon}.png" alt="${day.description}">
+                        <p class="weather-temp">${day.temp}°C</p>
+                        <p class="weather-desc">${day.description}</p>
+                        <small>💧 ${day.humidity}% | 💨 ${day.wind_speed} m/s</small>
+                    </div>
+                `;
+            });
+            
+            forecastHTML += '</div>';
+            weatherResults.innerHTML = forecastHTML;
+            weatherResults.classList.remove('hidden');
+        }
+
+        // Form submission
+        document.getElementById('prediction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!selectedCoordinates || !selectedState) {
+                alert('Please select a location on the map to determine the State for prediction.');
+                return;
             }
             
-            function createRecommendationCard(title, details) {
-                const card = document.createElement('div');
-                card.className = 'card recommendation-card';
-                
-                const formattedTitle = title.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                let content = `<h4>${formattedTitle}</h4><ul>`;
-                
-                if (typeof details === 'object') {
-                    for (const [key, value] of Object.entries(details)) {
-                        const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        content += `<li><strong>${formattedKey}:</strong> ${value}</li>`;
-                    }
-                } else {
-                    content += `<li>${details}</li>`;
+            const formData = {
+                crop: document.getElementById('crop').value,
+                season: document.getElementById('season').value,
+                // Use selectedState from map, NOT from a form field
+                state: selectedState, 
+                area: parseFloat(document.getElementById('area').value),
+                rainfall: parseFloat(document.getElementById('rainfall').value),
+                fertilizer: parseFloat(document.getElementById('fertilizer').value),
+                pesticide: parseFloat(document.getElementById('pesticide').value)
+            };
+
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('results-container').classList.add('hidden');
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
                 }
 
-                content += '</ul>';
-                card.innerHTML = content;
-                return card;
+                displayResults(data);
+            } catch (error) {
+                document.getElementById('results-container').classList.remove('hidden');
+                document.getElementById('prediction-card').classList.add('hidden');
+                document.getElementById('recommendations-section').innerHTML = 
+                    `<div class="error-box"><h3>Prediction Failed</h3><p>${error.message}</p></div>`;
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        });
+
+        // Display prediction results
+        function displayResults(data) {
+            // Unhide prediction card if it was hidden by an error
+            document.getElementById('prediction-card').classList.remove('hidden');
+
+            // Update yield prediction
+            document.getElementById('yield-value').textContent = data.predicted_yield;
+            document.getElementById('yield-amount').textContent = data.predicted_yield;
+            document.getElementById('confidence-range').textContent = 
+                `${data.confidence_interval[0]} - ${data.confidence_interval[1]}`;
+            document.getElementById('total-production').textContent = data.total_production;
+
+            // Update recommendations
+            const recommendationsContent = document.getElementById('recommendations-content');
+            
+            if (data.recommendations && typeof data.recommendations === 'object' && !data.recommendations.error) {
+                let recommendationsHTML = '';
+                
+                Object.keys(data.recommendations).forEach(key => {
+                    const section = data.recommendations[key];
+                    const title = key.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    
+                    recommendationsHTML += `<div class="recommendation-card">
+                            <h4>${title}</h4>`;
+                    
+                    if (typeof section === 'object') {
+                        recommendationsHTML += '<ul>';
+                        Object.keys(section).forEach(subKey => {
+                            const subTitle = subKey.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                            recommendationsHTML += `<li><strong>${subTitle}:</strong> ${section[subKey]}</li>`;
+                        });
+                        recommendationsHTML += '</ul>';
+                    } else {
+                        recommendationsHTML += `<p>${section}</p>`;
+                    }
+                    
+                    recommendationsHTML += '</div>';
+                });
+                
+                recommendationsContent.innerHTML = recommendationsHTML;
+            } else {
+                recommendationsContent.innerHTML = 
+                    '<div class="warning-box"><p>🤖 AI recommendations are not available. Ensure the server is configured with a valid Gemini API key.</p></div>';
             }
 
-            function displayError(message) {
-                resultsContainer.classList.remove('hidden');
-                document.getElementById('prediction-card').classList.add('hidden');
-                document.getElementById('recommendations-section').classList.add('hidden');
-                errorBox.classList.remove('hidden');
-                document.getElementById('error-message').textContent = message;
-            }
+            // Show results
+            document.getElementById('results-container').classList.remove('hidden');
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+            
+            // Animate recommendation cards
+            setTimeout(() => {
+                document.querySelectorAll('.recommendation-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                    }, index * 100);
+                });
+            }, 100);
+        }
+
+        // Weather button event listener
+        document.getElementById('weather-btn').addEventListener('click', getWeatherForecast);
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMap();
+            setupLocationSearch();
         });
     </script>
 </body>
