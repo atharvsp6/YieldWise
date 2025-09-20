@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../styles/Home.css';
 
 const Home = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="home">
       {/* Hero Section */}
@@ -10,21 +13,20 @@ const Home = () => {
         <div className="hero-content">
           <h1 className="hero-title">
             <span className="hero-icon">🌾</span>
-            Welcome to YieldWise
+            {t('home.title')}
           </h1>
           <p className="hero-subtitle">
-            AI-Powered Agricultural Intelligence Platform
+            {t('home.subtitle')}
           </p>
           <p className="hero-description">
-            Maximize your crop yields with advanced machine learning predictions, 
-            weather insights, and intelligent farming recommendations.
+            {t('home.description')}
           </p>
           <div className="hero-actions">
             <Link to="/yield-predictor" className="btn btn-primary">
-              🎯 Start Predicting
+              🎯 {t('home.getStarted')}
             </Link>
             <Link to="/dashboard" className="btn btn-secondary">
-              📊 View Dashboard
+              📊 {t('home.learnMore')}
             </Link>
           </div>
         </div>
@@ -40,22 +42,22 @@ const Home = () => {
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">🎯</div>
-              <h3>Yield Prediction</h3>
-              <p>Advanced ML models predict crop yields based on weather, soil, and farming practices</p>
+              <h3>{t('home.features.yieldPrediction.title')}</h3>
+              <p>{t('home.features.yieldPrediction.description')}</p>
               <Link to="/yield-predictor" className="feature-link">Try Now →</Link>
             </div>
             
             <div className="feature-card">
               <div className="feature-icon">💰</div>
-              <h3>Financial Planning</h3>
-              <p>Calculate costs, profits, and ROI with comprehensive financial analysis tools</p>
+              <h3>{t('home.features.financialAnalysis.title')}</h3>
+              <p>{t('home.features.financialAnalysis.description')}</p>
               <Link to="/financial-calculator" className="feature-link">Calculate →</Link>
             </div>
             
             <div className="feature-card">
               <div className="feature-icon">🔬</div>
-              <h3>Disease Detection</h3>
-              <p>AI-powered plant disease identification with treatment recommendations</p>
+              <h3>{t('home.features.diseaseDetection.title')}</h3>
+              <p>{t('home.features.diseaseDetection.description')}</p>
               <Link to="/disease-detection" className="feature-link">Detect →</Link>
             </div>
             

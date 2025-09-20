@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
 import './Navbar.css';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -33,7 +37,7 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="nav-icon">🏠</span>
-                Home
+                {t('nav.home')}
               </Link>
             </li>
             <li className="nav-item">
@@ -43,7 +47,7 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="nav-icon">📊</span>
-                Yield Predictor
+                {t('nav.yieldPredictor')}
               </Link>
             </li>
             <li className="nav-item">
@@ -53,7 +57,7 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="nav-icon">📈</span>
-                Dashboard
+                {t('nav.dashboard')}
               </Link>
             </li>
             <li className="nav-item">
@@ -63,7 +67,7 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="nav-icon">💰</span>
-                Financial Calculator
+                {t('nav.financialCalculator')}
               </Link>
             </li>
             <li className="nav-item">
@@ -73,16 +77,20 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="nav-icon">🔬</span>
-                Disease Detection
+                {t('nav.diseaseDetection')}
               </Link>
             </li>
           </ul>
         </div>
         
-        <div className="navbar-toggle" onClick={toggleMenu}>
-          <span className={`toggle-bar ${isMenuOpen ? 'active' : ''}`}></span>
-          <span className={`toggle-bar ${isMenuOpen ? 'active' : ''}`}></span>
-          <span className={`toggle-bar ${isMenuOpen ? 'active' : ''}`}></span>
+        <div className="navbar-controls">
+          <LanguageSwitcher />
+          <ThemeToggle />
+          <div className="navbar-toggle" onClick={toggleMenu}>
+            <span className={`toggle-bar ${isMenuOpen ? 'active' : ''}`}></span>
+            <span className={`toggle-bar ${isMenuOpen ? 'active' : ''}`}></span>
+            <span className={`toggle-bar ${isMenuOpen ? 'active' : ''}`}></span>
+          </div>
         </div>
       </div>
     </nav>
