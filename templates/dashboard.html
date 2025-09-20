@@ -19,7 +19,7 @@
 
         <!-- Navigation -->
         <nav class="nav-breadcrumb">
-            <a href="/">🏠 Home</a>
+            <a href="{{ url_for('index') }}">🏠 Home</a>
             <span>→</span>
             <span>Dashboard</span>
         </nav>
@@ -31,7 +31,7 @@
                 <div class="stat-content">
                     <h3>Yield Prediction</h3>
                     <p>AI-powered crop yield forecasting</p>
-                    <a href="/" class="stat-link">Get Started →</a>
+                    <a href="{{ url_for('index') }}" class="stat-link">Get Started →</a>
                 </div>
             </div>
             <div class="stat-card">
@@ -39,7 +39,7 @@
                 <div class="stat-content">
                     <h3>Disease Detection</h3>
                     <p>Plant health analysis from images</p>
-                    <a href="/disease-detection" class="stat-link">Analyze →</a>
+                    <a href="{{ url_for('disease_detection_page') }}" class="stat-link">Analyze →</a>
                 </div>
             </div>
             <div class="stat-card">
@@ -47,7 +47,7 @@
                 <div class="stat-content">
                     <h3>Financial Calculator</h3>
                     <p>Comprehensive cost-benefit analysis</p>
-                    <a href="/financial-calculator" class="stat-link">Calculate →</a>
+                    <a href="{{ url_for('financial_calculator_page') }}" class="stat-link">Calculate →</a>
                 </div>
             </div>
             <div class="stat-card">
@@ -55,7 +55,7 @@
                 <div class="stat-content">
                     <h3>Weather Forecast</h3>
                     <p>Real-time weather information</p>
-                    <a href="/" class="stat-link">Check Weather →</a>
+                    <a href="{{ url_for('index') }}" class="stat-link">Check Weather →</a>
                 </div>
             </div>
         </div>
@@ -185,22 +185,22 @@
         <div class="card">
             <h3>⚡ Quick Actions</h3>
             <div class="actions-grid">
-                <a href="/" class="action-card">
+                <a href="{{ url_for('index') }}" class="action-card">
                     <div class="action-icon">🎯</div>
                     <h4>Predict Yield</h4>
                     <p>Get AI-powered yield predictions for your crops</p>
                 </a>
-                <a href="/disease-detection" class="action-card">
+                <a href="{{ url_for('disease_detection_page') }}" class="action-card">
                     <div class="action-icon">🔬</div>
                     <h4>Detect Disease</h4>
                     <p>Upload plant images for disease analysis</p>
                 </a>
-                <a href="/financial-calculator" class="action-card">
+                <a href="{{ url_for('financial_calculator_page') }}" class="action-card">
                     <div class="action-icon">💰</div>
                     <h4>Calculate Costs</h4>
                     <p>Get detailed financial analysis for farming</p>
                 </a>
-                <a href="/" class="action-card">
+                <a href="{{ url_for('index') }}" class="action-card">
                     <div class="action-icon">🌤️</div>
                     <h4>Check Weather</h4>
                     <p>View weather forecast for your location</p>
@@ -208,6 +208,39 @@
             </div>
         </div>
     </div>
+
+    <footer class="py-4 px-4">
+        <div class="container mx-auto">
+            <div class="flex flex-wrap justify-around items-center gap-8">
+
+                <!-- Link 1: Yield Predictor -->
+                <a href="{{ url_for('index') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">🌾</span>
+                    <span class="text-sm font-medium">Yield Predictor</span>
+                </a>
+
+                <!-- Link 2: Financial Calculator -->
+                <a href="{{ url_for('financial_calculator_page') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">💰</span>
+                    <span class="text-sm font-medium">Financial Calculator</span>
+                </a>
+
+                <!-- Link 3: Disease Detection -->
+                <a href="{{ url_for('disease_detection_page') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">🔬</span>
+                    <span class="text-sm font-medium">Disease Detection</span>
+                </a>
+
+                <!-- Link 4: Dashboard -->
+                <a href="{{ url_for('dashboard') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">📊</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+
+            </div>
+            
+        </div>
+    </footer>
 
     <style>
         .nav-breadcrumb {
