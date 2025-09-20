@@ -20,7 +20,7 @@
 
         <!-- Navigation -->
         <nav class="nav-breadcrumb">
-            <a href="/">🏠 Home</a>
+            <a href="{{ url_for('index') }}">🏠 Home</a>
             <span>→</span>
             <span>Financial Calculator</span>
         </nav>
@@ -98,6 +98,39 @@
             </div>
         </div>
     </div>
+
+    <footer class="py-4 px-4">
+        <div class="container mx-auto">
+            <div class="flex flex-wrap justify-around items-center gap-8">
+
+                <!-- Link 1: Yield Predictor -->
+                <a href="{{ url_for('index') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">🌾</span>
+                    <span class="text-sm font-medium">Yield Predictor</span>
+                </a>
+
+                <!-- Link 2: Financial Calculator -->
+                <a href="{{ url_for('financial_calculator_page') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">💰</span>
+                    <span class="text-sm font-medium">Financial Calculator</span>
+                </a>
+
+                <!-- Link 3: Disease Detection -->
+                <a href="{{ url_for('disease_detection_page') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">🔬</span>
+                    <span class="text-sm font-medium">Disease Detection</span>
+                </a>
+
+                <!-- Link 4: Dashboard -->
+                <a href="{{ url_for('dashboard') }}" class="flex flex-col items-center w-24 text-center text-gray-600 hover:text-gray-900 transition-colors duration-300 ease-in-out">
+                    <span class="text-3xl mb-2">📊</span>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </a>
+
+            </div>
+            
+        </div>
+    </footer>
 
     <script>
         const financeForm = document.getElementById('finance-form');
