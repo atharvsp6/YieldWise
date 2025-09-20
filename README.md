@@ -2,6 +2,90 @@
 
 YieldWise is a comprehensive agricultural intelligence platform that combines machine learning, computer vision, and AI to help farmers make data-driven decisions for crop management, disease detection, and financial planning.
 
+## 🏃‍♂️ Quick Start - Running the Full Application
+
+### Prerequisites
+- Python 3.8+ (for backend)
+- Node.js 16+ (for frontend)
+- Git
+
+### 🔧 Backend Setup (Flask API)
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/atharvsp6/YieldWise.git
+   cd YieldWise
+   ```
+
+2. **Install Python dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Start the Flask backend**
+   ```bash
+   python app.py
+   ```
+   
+   The backend will run on `http://localhost:5000`
+
+### 🎨 Frontend Setup (React Application)
+
+1. **Navigate to frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install Node.js dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the React development server**
+   ```bash
+   npm start
+   ```
+   
+   The frontend will run on `http://localhost:3000`
+
+### 🌐 Access the Application
+
+Open your browser and navigate to `http://localhost:3000` to access the YieldWise platform.
+
+**Note**: Make sure both backend (port 5000) and frontend (port 3000) servers are running simultaneously for full functionality.
+
+## 📱 Application Features
+
+### 🏠 Home Page
+- **Welcome section** with platform introduction
+- **Feature highlights** and benefits overview
+- **Quick navigation** to main tools
+- **Getting started guide** for new users
+
+### 🎯 Yield Predictor
+- **Interactive form** for crop details input
+- **AI-powered predictions** with confidence intervals
+- **Comprehensive recommendations** for optimization
+- **Real-time backend integration**
+
+### 📈 Dashboard
+- **Analytics overview** with key metrics
+- **Quick actions** for common tasks
+- **Recent insights** and alerts
+- **Weather information** widget
+
+### 💰 Financial Calculator
+- **Cost breakdown analysis** with detailed inputs
+- **ROI calculations** and profitability assessment
+- **Market insights** and recommendations
+- **Export capabilities** for reports
+
+### 🔬 Disease Detection
+- **Image upload interface** with drag-and-drop
+- **AI-powered analysis** for disease identification
+- **Treatment recommendations** and prevention tips
+- **Results history** and tracking
+
 ## 🚀 Features
 
 ### 🎯 Smart Yield Prediction

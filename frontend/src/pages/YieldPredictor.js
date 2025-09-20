@@ -251,7 +251,7 @@ const YieldPredictor = () => {
                 <div className="prediction-summary">
                   <div className="yield-display">
                     <div className="yield-value">
-                      {prediction.predicted_yield.toFixed(2)}
+                      {prediction.predicted_yield ? prediction.predicted_yield.toFixed(2) : '0.00'}
                     </div>
                     <div className="yield-unit">tons/hectare</div>
                   </div>
@@ -260,8 +260,8 @@ const YieldPredictor = () => {
                     <div className="detail-item">
                       <span className="detail-label">Confidence Range:</span>
                       <span className="detail-value">
-                        {prediction.confidence_interval ? 
-                          `${prediction.confidence_interval.lower.toFixed(2)} - ${prediction.confidence_interval.upper.toFixed(2)}` 
+                        {prediction.confidence_interval && Array.isArray(prediction.confidence_interval) ? 
+                          `${prediction.confidence_interval[0]?.toFixed(2)} - ${prediction.confidence_interval[1]?.toFixed(2)}` 
                           : 'N/A'
                         }
                       </span>
@@ -269,30 +269,33 @@ const YieldPredictor = () => {
                     <div className="detail-item">
                       <span className="detail-label">Total Production:</span>
                       <span className="detail-value">
-                        {(prediction.predicted_yield * parseFloat(formData.area)).toFixed(2)} tons
+                        {(prediction.predicted_yield && formData.area) ? 
+                          (prediction.predicted_yield * parseFloat(formData.area)).toFixed(2) + ' tons'
+                          : 'N/A'
+                        }
                       </span>
                     </div>
                     <div className="detail-item">
                       <span className="detail-label">Status:</span>
-                      <span className={`detail-value ${prediction.status}`}>
-                        {prediction.status}
+                      <span className={`detail-value ${(prediction.prediction_status || prediction.status || '').toLowerCase()}`}>
+                        {prediction.prediction_status || prediction.status || 'Unknown'}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {prediction.ai_recommendations && (
+                {prediction.recommendations && (
                   <div className="recommendations">
                     <h3>🤖 AI Recommendations</h3>
                     <div className="recommendations-content">
-                      {Object.entries(prediction.ai_recommendations).map(([category, recommendations]) => (
+                      {Object.entries(prediction.recommendations).map(([category, recommendations]) => (
                         <div key={category} className="recommendation-category">
-                          <h4>{category}</h4>
-                          {typeof recommendations === 'object' ? (
+                          <h4>{category.replace(/_/g, ' ')}</h4>
+                          {typeof recommendations === 'object' && recommendations !== null ? (
                             <ul>
                               {Object.entries(recommendations).map(([key, value]) => (
                                 <li key={key}>
-                                  <strong>{key}:</strong> {value}
+                                  <strong>{key.replace(/_/g, ' ')}:</strong> {value}
                                 </li>
                               ))}
                             </ul>
