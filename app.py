@@ -330,7 +330,7 @@ load_dotenv()
 app = Flask(__name__, static_folder='static')
 CORS(app, resources={
     r"/api/*": {
-        "origins": ["http://localhost:3000"],
+        "origins": ["http://localhost:3000", "http://localhost:5000", "https://*.vercel.app", "https://*.netlify.app", "https://*.herokuapp.com"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }

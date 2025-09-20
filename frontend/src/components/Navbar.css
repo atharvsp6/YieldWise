@@ -1,11 +1,13 @@
 /* Navbar.css - Navigation component styling */
 .navbar {
-  background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: var(--navbar-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--navbar-shadow);
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .navbar-container {
@@ -39,11 +41,7 @@
 .brand-text {
   font-size: 1.75rem;
   font-weight: 700;
-  color: white;
-  background: linear-gradient(135deg, #10b981, #06d6a0);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -71,7 +69,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  color: #e2e8f0;
+  color: var(--text-color);
   text-decoration: none;
   border-radius: 0.75rem;
   font-weight: 500;
@@ -88,7 +86,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -105,12 +103,19 @@
 
 .nav-link.active {
   color: white;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
   box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .nav-icon {
   font-size: 1.125rem;
+}
+
+/* Navbar Controls */
+.navbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Mobile Toggle */
@@ -130,7 +135,7 @@
   display: block;
   height: 3px;
   width: 100%;
-  background: #e2e8f0;
+  background: var(--text-color);
   border-radius: 2px;
   transition: all 0.3s ease;
   transform-origin: center;
@@ -158,18 +163,23 @@
     display: flex;
   }
   
+  .navbar-controls {
+    order: 1;
+  }
+  
   .navbar-menu {
     position: fixed;
     top: 70px;
     left: 0;
     right: 0;
-    background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
+    background: var(--navbar-bg);
     backdrop-filter: blur(10px);
-    border-top: 1px solid #334155;
+    border-top: 1px solid var(--border-color);
     transform: translateY(-100%);
     opacity: 0;
     visibility: hidden;
     z-index: 999;
+    transition: all 0.3s ease;
   }
   
   .navbar-menu.active {

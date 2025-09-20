@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import '../styles/YieldPredictor.css';
 
 const YieldPredictor = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     crop: '',
     season: '',
@@ -45,10 +47,10 @@ const YieldPredictor = () => {
       if (response.data.status === 'success') {
         setPrediction(response.data);
       } else {
-        setError(response.data.message || 'Prediction failed');
+        setError(response.data.message || t('yieldPredictor.results.error'));
       }
     } catch (err) {
-      setError('Error connecting to server. Please try again.');
+      setError(t('yieldPredictor.results.error'));
       console.error('Prediction error:', err);
     } finally {
       setLoading(false);

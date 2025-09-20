@@ -2,6 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
+// Import contexts
+import { ThemeProvider } from './contexts/ThemeContext';
+import './contexts/i18n';
+
 // Import components
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -12,21 +16,23 @@ import DiseaseDetection from './pages/DiseaseDetection';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/yield-predictor" element={<YieldPredictor />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/financial-calculator" element={<FinancialCalculator />} />
-            <Route path="/disease-detection" element={<DiseaseDetection />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/yield-predictor" element={<YieldPredictor />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/financial-calculator" element={<FinancialCalculator />} />
+              <Route path="/disease-detection" element={<DiseaseDetection />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 
