@@ -76,7 +76,7 @@ class SmartCropAdvisor:
         crops = ['Rice', 'Wheat', 'Maize', 'Cotton', 'Sugarcane', 'Groundnut', 'Bajra']
         seasons = ['Kharif', 'Rabi', 'Summer', 'Whole Year']
         states = ['Andhra Pradesh', 'Karnataka', 'Tamil Nadu', 'Kerala', 'Maharashtra',
-                  'Punjab', 'Haryana', 'Gujarat', 'Rajasthan', 'West Bengal']
+                      'Punjab', 'Haryana', 'Gujarat', 'Rajasthan', 'West Bengal']
         data = []
         for i in range(n_samples):
             crop = np.random.choice(crops)
@@ -93,9 +93,9 @@ class SmartCropAdvisor:
             fert_factor = min(1.4, 0.7 + (fertilizer/100) * 0.8)
             yield_value = (base_yield * season_factor * rain_factor * fert_factor * np.random.uniform(0.85, 1.15))
             data.append({'Crop': crop, 'Crop_Year': np.random.randint(2018, 2024), 'Season': season,
-                         'State': state, 'Area': round(area, 1), 'Annual_Rainfall': round(rainfall, 1),
-                         'Fertilizer': round(fertilizer, 1), 'Pesticide': round(pesticide, 1),
-                         'Yield': round(yield_value, 2)})
+                          'State': state, 'Area': round(area, 1), 'Annual_Rainfall': round(rainfall, 1),
+                          'Fertilizer': round(fertilizer, 1), 'Pesticide': round(pesticide, 1),
+                          'Yield': round(yield_value, 2)})
         return pd.DataFrame(data)
     def load_and_preprocess_data(self, df=None):
         """Load and preprocess crop data"""
@@ -145,8 +145,8 @@ class SmartCropAdvisor:
             return None, None, "Model not trained yet!"
         try:
             input_data = pd.DataFrame({'Crop': [crop], 'Crop_Year': [year], 'Season': [season], 'State': [state],
-                                       'Area': [area], 'Annual_Rainfall': [rainfall], 'Fertilizer': [fertilizer],
-                                       'Pesticide': [pesticide]})
+                                         'Area': [area], 'Annual_Rainfall': [rainfall], 'Fertilizer': [fertilizer],
+                                         'Pesticide': [pesticide]})
             input_data['Fertilizer_per_Area'] = input_data['Fertilizer'] / (input_data['Area'] + 1)
             input_data['Pesticide_per_Area'] = input_data['Pesticide'] / (input_data['Area'] + 1)
             input_data['Rainfall_Category'] = pd.cut(input_data['Annual_Rainfall'], bins=[0, 800, 1500, 3000], labels=['Low', 'Medium', 'High'])
@@ -202,7 +202,7 @@ Analyze the following data for a farmer:
 - **Yield Category:** {yield_category} (Average is {crop_stats:.2f})
 - **Conditions:** State: {current_conditions['state']}, Season: {current_conditions['season']}, Rainfall: {current_conditions['rainfall']} mm, Fertilizer: {current_conditions['fertilizer']} kg/ha.
 Return a single JSON object with these exact keys: "yield_assessment", "fertilizer_management", "irrigation_plan", "planting_strategy", "risk_mitigation","cost-benefit_analysis".
-For each key, provide a dictionary of actionable advice. Example for fertilizer_management: {"npk_ratio": "...", "application_timing": "...", "organic_options": "..."}, cost-benefit_analysis: {"expected_yield_increase": "...", "cost": "...", "benefit": "...", "roi_estimate": "..."}. Be direct and practical.
+For each key, provide a dictionary of actionable advice. Example for fertilizer_management: {{"npk_ratio": "...", "application_timing": "...", "organic_options": "..."}}, cost-benefit_analysis: {{"expected_yield_increase": "...", "cost": "...", "benefit": "...", "roi_estimate": "..."}}. Be direct and practical.
 """
             response = self.gemini_model.generate_content(prompt)
             response_text = response.text.strip().replace('```json', '').replace('```', '')
@@ -246,7 +246,7 @@ class PlantDiseaseDetector:
     def __init__(self):
         self.model = None
         self.class_labels = ['bacterial_leaf_blight', 'bacterial_leaf_streak', 'bacterial_panicle_blight',
-                           'blast', 'brown_spot', 'dead_heart', 'downy_mildew', 'hispa', 'normal', 'tungro']
+                            'blast', 'brown_spot', 'dead_heart', 'downy_mildew', 'hispa', 'normal', 'tungro']
         if TENSORFLOW_AVAILABLE:
             self.load_model()
     def load_model(self):
@@ -268,8 +268,156 @@ class PlantDiseaseDetector:
             # Read and preprocess image
             img = Image.open(image_file)
             img = img.convert('RGB')
-            try:
-                img = img.resize((128, 128))
-            except Exception as e:
-                print(f"Image resize error: {e}")
-            # (Keep
+            img = img.resize((128, 128))
+            img_array = image.img_to_array(img)
+            img_array = np.expand_dims(img_array, axis=0)
+            img_array /= 255.0
+
+            # Make prediction
+            predictions = self.model.predict(img_array)
+            predicted_class_index = np.argmax(predictions, axis=1)[0]
+            predicted_class = self.class_labels[predicted_class_index]
+            confidence = np.max(predictions)
+
+            return {
+                "status": "success",
+                "predicted_disease": predicted_class,
+                "confidence": float(confidence),
+                "remedy": self.get_remedy(predicted_class)
+            }
+
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": f"Prediction failed: {str(e)}"
+            }
+
+    def get_remedy(self, disease_name):
+        """Provide basic remedies for detected diseases"""
+        remedies = {
+            'bacterial_leaf_blight': 'Use a copper-based bactericide. Improve field sanitation and drainage. Avoid excessive nitrogen fertilizer.',
+            'bacterial_leaf_streak': 'Apply antibiotics like streptocycline. Rotate crops and use resistant varieties.',
+            'bacterial_panicle_blight': 'Apply fungicides like validamycin or kasugamycin. Remove infected plants and reduce humidity.',
+            'blast': 'Use fungicides containing tricyclazole or azoxystrobin. Manage nitrogen levels and use resistant varieties.',
+            'brown_spot': 'Apply fungicides such as mancozeb or propiconazole. Use proper fertilization and improve water management.',
+            'dead_heart': 'Apply insecticides like carbofuran or chlorpyrifos. Remove and destroy affected stems.',
+            'downy_mildew': 'Use fungicides like metalaxyl or fosetyl-al. Improve air circulation and use resistant seed varieties.',
+            'hispa': 'Apply insecticides such as imidacloprid or lambda-cyhalothrin. Hand-pick and destroy adult beetles.',
+            'normal': 'No disease detected. Continue good agricultural practices.',
+            'tungro': 'Control insect vectors like leafhoppers with insecticides. Remove and destroy infected plants immediately.'
+        }
+        return remedies.get(disease_name, "No specific remedy found. Consult a local expert.")
+
+    def simulate_disease_prediction(self, image_file):
+        """Simulate disease prediction when model is not available"""
+        # A simple, fake simulation
+        possible_diseases = ['normal', 'blast', 'brown_spot', 'bacterial_leaf_blight']
+        predicted_class = np.random.choice(possible_diseases)
+        confidence = np.random.uniform(0.6, 0.95)
+
+        return {
+            "status": "success (simulated)",
+            "predicted_disease": predicted_class,
+            "confidence": float(confidence),
+            "remedy": self.get_remedy(predicted_class)
+        }
+
+# -----------------------------------------------------------------------------
+# FLASK APPLICATION SETUP
+# -----------------------------------------------------------------------------
+load_dotenv()
+app = Flask(__name__, static_folder='static')
+app.config['UPLOAD_FOLDER'] = 'uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+yield_advisor = SmartCropAdvisor()
+disease_detector = PlantDiseaseDetector()
+
+# Initialize ML models and data
+X_data, y_data = yield_advisor.load_and_preprocess_data()
+r2, rmse = yield_advisor.train_model(X_data, y_data)
+print(f"✅ Yield Prediction Model trained. R2: {r2:.2f}, RMSE: {rmse:.2f}")
+
+# Setup Gemini API
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+gemini_status, gemini_message = yield_advisor.setup_gemini_api(GEMINI_API_KEY)
+print(gemini_message)
+
+@app.route('/')
+def index():
+    return send_from_directory('static', 'index.html')
+
+@app.route('/api/predict_yield', methods=['POST'])
+def predict_yield_api():
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"status": "error", "message": "Invalid JSON data"}), 400
+        
+        crop = data.get('crop')
+        season = data.get('season')
+        state = data.get('state')
+        area = data.get('area')
+        rainfall = data.get('rainfall')
+        fertilizer = data.get('fertilizer')
+        pesticide = data.get('pesticide')
+        
+        if not all([crop, season, state, area, rainfall, fertilizer, pesticide]):
+            return jsonify({"status": "error", "message": "Missing one or more required fields"}), 400
+
+        area = float(area)
+        rainfall = float(rainfall)
+        fertilizer = float(fertilizer)
+        pesticide = float(pesticide)
+
+        predicted_yield, confidence, status = yield_advisor.predict_yield(
+            crop, season, state, area, rainfall, fertilizer, pesticide
+        )
+
+        if predicted_yield is None:
+            return jsonify({"status": "error", "message": f"Prediction failed: {status}"}), 500
+
+        recommendations = yield_advisor.get_comprehensive_recommendations(
+            crop, predicted_yield, data, confidence
+        )
+
+        response_data = {
+            "status": "success",
+            "prediction_status": status,
+            "predicted_yield": round(predicted_yield, 2),
+            "confidence_interval": [round(c, 2) for c in confidence],
+            "recommendations": recommendations,
+            "model_r2": round(r2, 2),
+            "model_rmse": round(rmse, 2)
+        }
+        return jsonify(response_data)
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/api/detect_disease', methods=['POST'])
+def detect_disease_api():
+    if 'file' not in request.files:
+        return jsonify({"status": "error", "message": "No file part in the request"}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"status": "error", "message": "No selected file"}), 400
+    
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        result = disease_detector.predict_disease(filepath)
+        os.remove(filepath)
+
+        return jsonify(result)
+    
+    return jsonify({"status": "error", "message": "Unknown error processing image"}), 500
+
+@app.route('/api/data_stats')
+def get_data_stats():
+    return jsonify(yield_advisor.data_stats)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=8000)
