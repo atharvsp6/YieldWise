@@ -2,6 +2,7 @@ setuptools
 wheel
 pip
 Flask
+Flask-CORS
 pandas
 numpy
 python-dotenv

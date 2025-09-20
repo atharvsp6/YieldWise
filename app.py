@@ -1,5 +1,6 @@
 # app.py - Integrated YieldWise Platform with optional ML models
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 import pandas as pd
@@ -327,6 +328,13 @@ class PlantDiseaseDetector:
 # -----------------------------------------------------------------------------
 load_dotenv()
 app = Flask(__name__, static_folder='static')
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:3000"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 yield_advisor = SmartCropAdvisor()
@@ -420,4 +428,4 @@ def get_data_stats():
     return jsonify(yield_advisor.data_stats)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(debug=True, port=5000)
