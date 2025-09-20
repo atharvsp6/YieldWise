@@ -268,4 +268,8 @@ class PlantDiseaseDetector:
             # Read and preprocess image
             img = Image.open(image_file)
             img = img.convert('RGB')
-            img = img.resize((128, 128))
+            try:
+                img = img.resize((128, 128))
+            except Exception as e:
+                print(f"Image resize error: {e}")
+            # (Keep
